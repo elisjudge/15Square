@@ -1,11 +1,11 @@
 class Game {
     constructor({
-        table = document.getElementById("table"),
+        board = document.getElementById("board"),
         tiles = [],
         rows = 4,
         columns = 4
         } = {}) {
-        this.table = table;
+        this.board = board;
         this.tiles = tiles;
         this.rows = rows;
         this.columns = columns;
@@ -13,30 +13,37 @@ class Game {
     }
 
     init() {
-        this.table.innerHTML = "";  
-
         for (let i = 0; i < this.rows; i++) {
-            let tr = document.createElement("tr");
+            let row = document.createElement("div");
+            row.className = "row";
             for (let j = 0; j < this.columns; j++) {
-                let td = document.createElement("td");
+                let cell = document.createElement("div");
                 let index = i * 4 + j + 1;
                 
-                td.className = "tile";
+                cell.className = "tile";
 
-                td.index = index;
-                td.dataset.value = index;
-                td.textContent = index === 16 ? "" : index;
+                cell.dataset.index = index;
+                cell.dataset.value = index;
+                cell.textContent = index === 16 ? "" : index;
 
-                tr.appendChild(td);
-                this.tiles.push(td);  // Store tile reference
+                row.appendChild(cell);
+                this.tiles.push(cell);  // Store tile reference
             }
-            this.table.appendChild(tr);
+            this.board.appendChild(row);
         }
+
 
         // Shuffle tiles 
         for (let i = 0; i < 1000; i++) {
-            this.click({ srcElement: { index: Math.floor(Math.random() * 15) + 1 }});
+            this.click({ 
+                target: { 
+                    dataset: {
+                      index: Math.floor(Math.random() * 15) + 1   
+                    }
+                }
+            });
         }
+
 
         this.tiles.forEach((tile) => {
             tile.addEventListener("click", (event) => {
@@ -46,7 +53,7 @@ class Game {
     }
 
     click(e) {
-        let i = e.srcElement.index - 1;
+        let i = parseInt(e.target.dataset.index, 10) - 1;
 
         if (i - 4 >= 0 && this.tiles[i - 4].dataset.value === "16") {
             this.swap(i, i - 4);
