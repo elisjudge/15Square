@@ -4,9 +4,15 @@ class Game {
         tiles = [],
         rows = 4,
         columns = 4
+        
         } = {}) {
-        this.board = board;
+        this.board = {
+            gameBoard: board,
+            isShuffled: false,
+        };
         this.tiles = tiles;
+        this.winningTiles = [];
+        this.winner = false;
         this.rows = rows;
         this.columns = columns;
         this.init();
@@ -28,8 +34,9 @@ class Game {
 
                 row.appendChild(cell);
                 this.tiles.push(cell);  // Store tile reference
+                this.winningTiles.push(index); // Store index value
             }
-            this.board.appendChild(row);
+            this.board.gameBoard.appendChild(row);
         }
 
 
@@ -43,11 +50,14 @@ class Game {
                 }
             });
         }
+        this.board.isShuffled = true;
 
 
         this.tiles.forEach((tile) => {
             tile.addEventListener("click", (event) => {
-                this.click(event);
+                if (!this.winner) {
+                    this.click(event);
+                }
             });
         });
     }
@@ -64,6 +74,10 @@ class Game {
         } else if (i % 4 !== 3 && this.tiles[i + 1].dataset.value === "16") {
             this.swap(i, i + 1);
         }
+        
+        if (this.board.isShuffled) {
+            this.checkWin();
+        }
     }
 
     swap(i, j) {
@@ -72,6 +86,18 @@ class Game {
         this.tiles[i].dataset.value = this.tiles[j].dataset.value;
         this.tiles[j].textContent = temp === "0" ? "" : temp;
         this.tiles[j].dataset.value = temp;
+    }
+
+    checkWin() {
+        for (let i = 0; i < this.tiles.length; i++){
+            if (this.tiles[i].dataset.value != this.winningTiles[i]) {
+                console.log("Not yet");
+                return;
+            }
+        }
+        console.log("you win");
+        this.winner = true;
+        this.tiles[this.tiles.length -1].textContent = "16"
     }
 }
 
