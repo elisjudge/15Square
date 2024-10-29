@@ -33,6 +33,7 @@ class Game:
         self.board.cells[j] = temp
         self.set_target_index()
         self.valid_moves = self.get_valid_moves()
+        self.board.update_row_status()
 
     def set_target_index(self):
         self.target_index = int(np.nonzero(self.board.cells == 16)[0][0])
@@ -49,3 +50,4 @@ game = Game()
 print(game.board)
 print(game.target_index)
 print(game.valid_moves)
+print(game.board.row_complete)
