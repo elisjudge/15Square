@@ -55,23 +55,17 @@ class Game:
         }
 
 game = Game()
-print("Initial Game State")
+moves_limit = 1000000
+move_count = 0
+print("Initial Board")
 print(game.board)
-print(game.target_index)
-print(game.valid_moves)
-print(game.board.row_complete)
-print(game.winner)
-print()
-print("Player Makes Random Selection")
-current_move = game.player.select_move(valid_moves = game.valid_moves)
-print(current_move)
-game.simulate_click(current_move)
 
-print("New Game State")
+while move_count < moves_limit and not game.winner: 
+    current_move = game.player.select_move(valid_moves = game.valid_moves)
+    game.simulate_click(current_move)
+    move_count += 1
+    if move_count % 100000 == 0:
+        print(move_count)
+
+print("End Board")
 print(game.board)
-print(game.target_index)
-print(game.valid_moves)
-print(game.board.row_complete)
-print(game.winner)
-print()
-
