@@ -8,8 +8,10 @@ class Game:
         self.board = Board()
         self.winner = False
         self.target_index = None
-        self.valid_moves = None
+        self.board_shuffled = False
         self.shuffle_board()
+        self.set_target_index()
+        self.valid_moves = self.get_valid_moves()
         
     def simulate_click(self, i):
         if not self.winner:
@@ -26,14 +28,18 @@ class Game:
         for _ in range(1000):
             selection = random.randint(0, self.board.n_cells - 1)
             self.simulate_click(selection)
+        self.board_shuffled = True
 
     def swap_cells(self, i, j):
         temp = self.board.cells[i]
         self.board.cells[i] = self.board.cells[j]
         self.board.cells[j] = temp
-        self.set_target_index()
-        self.valid_moves = self.get_valid_moves()
-        self.board.update_row_status()
+
+        if self.board_shuffled:
+            self.set_target_index()
+            self.valid_moves = self.get_valid_moves()
+            self.board.update_row_status()
+            self.winner = all(self.board.row_complete)
 
     def set_target_index(self):
         self.target_index = int(np.nonzero(self.board.cells == 16)[0][0])
@@ -51,3 +57,4 @@ print(game.board)
 print(game.target_index)
 print(game.valid_moves)
 print(game.board.row_complete)
+print(game.winner)

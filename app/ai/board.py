@@ -10,7 +10,6 @@ class Board:
         self.target = self.n_cells
         self.target_index = self.n_cells - 1
         self.cells = self.create_cells()
-        self.win_state = self.cells.copy()
         self.row_complete = [False] * self.n_rows
 
     def create_cells(self):
