@@ -55,17 +55,37 @@ class Game:
         }
 
 game = Game()
-moves_limit = 1000000
 move_count = 0
-print("Initial Board")
-print(game.board)
 
-while move_count < moves_limit and not game.winner: 
-    current_move = game.player.select_move(valid_moves = game.valid_moves)
-    game.simulate_click(current_move)
+# HUMAN
+while True:
+    print(game.board)
+    print()
+    print(game.valid_moves)
+    print()
+    selection = int(input("Enter index you wish to move: "))
+    game.simulate_click(selection)
+    print()
+    print(f"Rows completed: {game.board.row_complete}" )
+    if game.winner:
+        print("You win")
+        break
     move_count += 1
-    if move_count % 100000 == 0:
-        print(move_count)
 
-print("End Board")
-print(game.board)
+print(f"Final move count: {move_count}")
+
+## AI LOGIC
+# moves_limit = 1000000
+# move_count = 0
+# print("Initial Board")
+# print(game.board)
+
+# while move_count < moves_limit and not game.winner: 
+#     current_move = game.player.select_move(valid_moves = game.valid_moves)
+#     game.simulate_click(current_move)
+#     move_count += 1
+#     if move_count % 100000 == 0:
+#         print(move_count)
+
+# print("End Board")
+# print(game.board)
