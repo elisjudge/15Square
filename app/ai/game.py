@@ -2,18 +2,18 @@ import numpy as np
 import random
 
 from board import Board
-from base_ai import BaseAI
 
 class Game:
-    def __init__(self) -> None:
+    def __init__(self, player) -> None:
         self.board = Board()
-        self.player = BaseAI()
+        self.player = player
         self.winner = False
         self.target_index = None
         self.board_shuffled = False
         self.shuffle_board()
         self.set_target_index()
         self.valid_moves = self.get_valid_moves()
+        self.n_moves = 0
         
     def simulate_click(self, i):
         if not self.winner:
@@ -53,39 +53,3 @@ class Game:
             "slide_right": self.target_index - 1 if self.target_index % self.board.n_cols != 0 else None,
             "slide_left": self.target_index + 1 if self.target_index % self.board.n_cols != self.board.n_cols - 1 else None
         }
-
-game = Game()
-move_count = 0
-
-# HUMAN
-while True:
-    print(game.board)
-    print()
-    print(game.valid_moves)
-    print()
-    selection = int(input("Enter index you wish to move: "))
-    game.simulate_click(selection)
-    print()
-    print(f"Rows completed: {game.board.row_complete}" )
-    if game.winner:
-        print("You win")
-        break
-    move_count += 1
-
-print(f"Final move count: {move_count}")
-
-## AI LOGIC
-# moves_limit = 1000000
-# move_count = 0
-# print("Initial Board")
-# print(game.board)
-
-# while move_count < moves_limit and not game.winner: 
-#     current_move = game.player.select_move(valid_moves = game.valid_moves)
-#     game.simulate_click(current_move)
-#     move_count += 1
-#     if move_count % 100000 == 0:
-#         print(move_count)
-
-# print("End Board")
-# print(game.board)
