@@ -1,10 +1,10 @@
 import sys
 import argparse 
-import numpy as np
 
 from game import Game
 from human import HumanPlayer
 from ai import AIPlayer
+from train import SimpleAITrainer
 
 MOVE_LIMIT = 5
 
@@ -33,28 +33,9 @@ class CmdLineParser:
             print(f"Final move count: {game.n_moves}")
 
         if self.args.type == "simple_ai":
-            move_limit = MOVE_LIMIT
-            player = AIPlayer()
-            game = Game(player=player)
-            game_history= []
-
-            while not game.winner and game.n_moves < move_limit:
-                current_state = game.board.cells
-                current_move = game.player.select_move(state=current_state, valid_moves= game.valid_moves)
-                game_history.append((np.copy(current_state), current_move))
-                print(game.board)
-                print()
-                print(game.valid_moves)
-                print()
-                game.simulate_click(current_move)
-                if game.winner:
-                    print("You Win")
-                    break
-                game.n_moves += 1
-            print(f"Final move count: {game.n_moves}")
-
-            print(game_history)
-            print(player.q_table)
+            trainer = SimpleAITrainer(move_limit=MOVE_LIMIT, player=AIPlayer())
+            trainer.play_game()
+            
         return self.args
 
 
