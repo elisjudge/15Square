@@ -30,17 +30,16 @@ class AIPlayer(Player):
                 return random.choice(valid_moves)
 
     def hash_state(self, state):
-        return tuple(state)
+        return tuple(int(x) if x.is_integer() else float(x) for x in state)
     
-    def update_q_value(self, hashed_state, action, reward, hashed_final_state):
+    def update_q_value(self, hashed_state, action, reward, hashed_next_state):
         if hashed_state not in self.q_table:
             self.q_table[hashed_state] = {}
-        if hashed_final_state not in self.q_table:
-            self.q_table[hashed_final_state] = {}
+        if hashed_next_state not in self.q_table:
+            self.q_table[hashed_next_state] = {}
         
         old_q = self.q_table[hashed_state].get(str(action), 0)
-        max_next_q = max(self.q_table[hashed_final_state].values(), default = 0)
-        current_q = self.q_table[hashed_state].get(str(action), 0)
-        new_q = current_q + self.lr * (reward + self.df * max_next_q - current_q)
+        max_next_q = max(self.q_table[hashed_next_state].values(), default = 0)
+        new_q = old_q + self.lr * (reward + self.df * max_next_q - old_q)
         self.q_table[hashed_state][str(action)] = new_q
         return abs(new_q - old_q)

@@ -6,8 +6,6 @@ from human import HumanPlayer
 from ai import AIPlayer
 from train import SimpleAITrainer
 
-MOVE_LIMIT = 5
-
 class CmdLineParser:
     def __init__(self) -> None:
         self.parser = argparse.ArgumentParser(description='15 Puzzle')
@@ -33,8 +31,9 @@ class CmdLineParser:
             print(f"Final move count: {game.n_moves}")
 
         if self.args.type == "simple_ai":
-            trainer = SimpleAITrainer(move_limit=MOVE_LIMIT, player=AIPlayer())
-            trainer.play_game()
+            player = AIPlayer()
+            trainer = SimpleAITrainer(player=player)
+            trainer.train_ai(propagation_type="forward")
             
         return self.args
 
