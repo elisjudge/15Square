@@ -1,6 +1,10 @@
 import sys
 import argparse 
 
+import cProfile
+import pstats  # Optional, for organizing profiling output
+from io import StringIO
+
 from game import Game
 from human import HumanPlayer
 from ai import AIPlayer
@@ -33,7 +37,18 @@ class CmdLineParser:
         if self.args.type == "simple_ai":
             player = AIPlayer()
             trainer = SimpleAITrainer(player=player)
+
+
+            profile = cProfile.Profile()
+            profile.enable()
             trainer.train_ai(propagation_type="forward")
+            profile.disable()
+            
+            # Print profile stats
+            stream = StringIO()
+            ps = pstats.Stats(profile, stream=stream).sort_stats('cumulative')
+            ps.print_stats(20)  # Show top 20 entries
+            print(stream.getvalue())
             
         return self.args
 

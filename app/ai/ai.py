@@ -2,8 +2,10 @@ from player import Player
 import numpy as np
 import random
 
+from functools import reduce
+
 class AIPlayer(Player):
-    def __init__(self, learning_rate = 0.1, discount_factor = 0.9, epsilon = 0.1) -> None:
+    def __init__(self, learning_rate = 0.1, discount_factor = 0.9, epsilon = 0.5) -> None:
         super().__init__()
         self.lr = learning_rate
         self.df = discount_factor
@@ -29,8 +31,9 @@ class AIPlayer(Player):
                 self.n_exploration += 1
                 return random.choice(valid_moves)
 
-    def hash_state(self, state):
-        return tuple(int(x) if x.is_integer() else float(x) for x in state)
+    def hash_state(self, state, base=16):
+        return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
+        # return tuple(int(x) if x.is_integer() else float(x) for x in state)
     
     def update_q_value(self, hashed_state, action, reward, hashed_next_state):
         if hashed_state not in self.q_table:

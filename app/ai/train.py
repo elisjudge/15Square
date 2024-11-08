@@ -3,8 +3,9 @@ from ai import AIPlayer
 from utils import timeit
 
 import numpy as np
+from functools import reduce
 
-N_EPISODES = 10000
+N_EPISODES = 100
 EPOCH_LENGTH = 1000
 MOVE_LIMIT = 1000
 
@@ -18,15 +19,17 @@ class SimpleAITrainer:
     def play_game(self):
         game = Game(player=self.target)
         history = []
-        while not game.winner and game.n_moves < self.move_limit:
+
+        for _ in range(self.move_limit):
             current_state = game.board.cells
             current_move = game.player.select_move(state=current_state, valid_moves= game.valid_moves)
             current_correct_positions = self.evaluate_correct_positions(current_state)
             history.append((np.copy(current_state), current_move, current_correct_positions))
             game.simulate_click(current_move)
+            game.n_moves += 1
             if game.winner:
                 break
-            game.n_moves += 1
+            
         return game.winner, game.board.cells, history
     
     def evaluate_correct_positions(self, state):
@@ -66,6 +69,10 @@ class SimpleAITrainer:
                 reward=reward,
                 hashed_next_state=self.target.hash_state(next_state)
             )
+
+    def hash_state(self, state, base=16):
+        return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
+
 
     @timeit
     def train_ai(self, propagation_type):

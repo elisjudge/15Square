@@ -33,9 +33,7 @@ class Game:
         self.board_shuffled = True
 
     def swap_cells(self, i, j):
-        temp = self.board.cells[i]
-        self.board.cells[i] = self.board.cells[j]
-        self.board.cells[j] = temp
+        self.board.cells[i], self.board.cells[j] = self.board.cells[j], self.board.cells[i]
 
         if self.board_shuffled:
             self.set_target_index()
