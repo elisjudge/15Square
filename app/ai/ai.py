@@ -2,7 +2,6 @@ import config as c
 import numpy as np
 import random
 
-from functools import reduce
 from player import Player
 
 class AIPlayer(Player):
@@ -32,8 +31,8 @@ class AIPlayer(Player):
                 self.n_exploration += 1
                 return random.choice(valid_moves)
 
-    def hash_state(self, state, base=c.HASH_BASE):
-        return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
+    def hash_state(self, state):
+        return tuple(map(int, state))
     
     def update_q_value(self, hashed_state, action, reward, hashed_next_state):
         if hashed_state not in self.q_table:
