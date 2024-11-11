@@ -67,24 +67,8 @@ class Trainer:
                 hashed_next_state=self.target.hash_state(next_state)
             )
 
-    def hash_state(self, state, base=16):
+    def hash_state(self, state, base=c.HASH_BASE):
         return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
-
 
     def train_ai(self):
         pass
-        # first_win_game = None
-        
-        # for i in range(self.n_games):
-        #     winner, final_state, history = self.play_game()
-        #     if winner:
-        #         self.back_propagate_reward(winner, final_state, history)
-
-        #         if first_win_game is None:
-        #             first_win_game = i  
-        #             break
-        #     else:
-        #         self.forward_propagate_reward(winner, final_state, history)
-
-        # if first_win_game is not None:
-        #     print(f"Games played prior to first win: {first_win_game}")

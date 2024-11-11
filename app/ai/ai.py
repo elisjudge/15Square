@@ -32,9 +32,8 @@ class AIPlayer(Player):
                 self.n_exploration += 1
                 return random.choice(valid_moves)
 
-    def hash_state(self, state, base=16):
+    def hash_state(self, state, base=c.HASH_BASE):
         return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
-        # return tuple(int(x) if x.is_integer() else float(x) for x in state)
     
     def update_q_value(self, hashed_state, action, reward, hashed_next_state):
         if hashed_state not in self.q_table:
