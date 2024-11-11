@@ -1,8 +1,8 @@
 from ai import AIPlayer
-from functools import reduce
 from game import Game
 
 import config as c
+import json
 import numpy as np
 
 class Trainer:
@@ -21,7 +21,8 @@ class Trainer:
             current_state = game.board.cells
             current_move = game.player.select_move(state=current_state, valid_moves= game.valid_moves)
             current_correct_positions = self.evaluate_correct_positions(current_state)
-            history.append((np.copy(current_state), current_move, current_correct_positions))
+            current_correct_rows = game.board.row_complete
+            history.append((np.copy(current_state), current_move, current_correct_rows, current_correct_positions))
             game.simulate_click(current_move)
             game.n_moves += 1
             if game.winner:
@@ -32,43 +33,47 @@ class Trainer:
     def evaluate_correct_positions(self, state):
         return {i for i, value in enumerate(state) if value == i + 1}
     
-    def back_propagate_reward(self, winner, final_state, history):
-        reward = 10 if winner else -10
+    def back_propagate_reward(self, final_state, history):
+        """Standard backward propagation, updating Q-table immediately."""
+        reward = 100 
         for i in range(len(history) - 1, -1, -1):
-            current_state, action, current_correct_positions = history[i]
+            current_state, action, current_correct_rows, current_correct_positions = history[i]
             next_state = history[i + 1][0] if i + 1 < len(history) else final_state
-            self.target.update_q_value(
-                hashed_state=self.target.hash_state(current_state),
-                action=str(action),
-                reward=reward,
-                hashed_next_state=self.target.hash_state(next_state)
-            )
+            self.update_q_value(current_state, action, reward, next_state)
     
-    def forward_propagate_reward(self, winner, final_state, history):
-        end_reward = 10 if winner else -10
-        
+    def forward_propagate_reward(self, final_state, history):
+        """Standard forward propagation, updating Q-table immediately."""
         for i in range(len(history)):
-            current_state, action, current_correct_positions = history[i]
+            current_state, action, current_correct_rows, current_correct_positions = history[i]
             next_state = history[i + 1][0] if i + 1 < len(history) else final_state
             final_state_correct_positions = self.evaluate_correct_positions(final_state)
             next_correct_positions = history[i + 1][2] if i + 1 < len(history) else final_state_correct_positions
 
-            intermediate_reward = len(next_correct_positions)
+            reward = len(next_correct_positions)
+            self.update_q_value(current_state, action, reward, next_state)
 
-            if i != len(history) - 1:
-                reward = intermediate_reward
-            else:
-                reward = end_reward + intermediate_reward
+    def hash_state(self, state):
+        return tuple(map(int, state))
+    
+    def save_q_table(self, filename="ai_q.json"):
+        """Save the Q-table to a file with tuple keys converted to strings for JSON compatibility."""
+        q_table_serializable = {str(key): value for key, value in self.target.q_table.items()}
+        with open(filename, "w") as f:
+            json.dump(q_table_serializable, f, indent=4)
 
-            self.target.update_q_value(
+    def load_q_table(self, filename="ai_q.json"):
+        """Load the Q-table from a file, converting string keys back to tuples."""
+        with open(filename, "r") as f:
+            q_table_data = json.load(f)
+        self.target.q_table = {eval(key): value for key, value in q_table_data.items()}
+    
+    def train_ai(self):
+        pass
+
+    def update_q_value(self, current_state, action, reward, next_state):
+        self.target.update_q_value(
                 hashed_state=self.target.hash_state(current_state),
                 action=str(action),
                 reward=reward,
                 hashed_next_state=self.target.hash_state(next_state)
             )
-
-    def hash_state(self, state, base=c.HASH_BASE):
-        return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
-
-    def train_ai(self):
-        pass

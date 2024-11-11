@@ -21,7 +21,8 @@ class BaseAITrainer(Trainer):
                     first_win_game = i  
                     break
             else:
-                self.forward_propagate_reward(winner, final_state, history)
+                self.forward_propagate_reward(final_state, history)
 
         if first_win_game is not None:
             print(f"Games played prior to first win: {first_win_game}")
+            
