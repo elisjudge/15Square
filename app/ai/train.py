@@ -10,14 +10,15 @@ EPOCH_LENGTH = 1000
 MOVE_LIMIT = 1000
 
 class SimpleAITrainer:
-    def __init__(self, player:AIPlayer, move_limit = MOVE_LIMIT, n_episodes = N_EPISODES, epoch_length = EPOCH_LENGTH) -> None:
+    def __init__(self, player:AIPlayer, move_limit = MOVE_LIMIT, n_episodes = N_EPISODES, epoch_length = EPOCH_LENGTH, seed= None) -> None:
         self.target = player
         self.move_limit = move_limit
         self.n_games = n_episodes
         self.epoch_length = epoch_length
+        self.game_seed = seed
 
     def play_game(self):
-        game = Game(player=self.target)
+        game = Game(player=self.target, seed=self.game_seed)
         history = []
 
         for _ in range(self.move_limit):
@@ -75,29 +76,21 @@ class SimpleAITrainer:
 
 
     @timeit
-    def train_ai(self, propagation_type):
-        wins = 0
-        losses = 0
+    def train_ai(self):
         first_win_game = None
-        first_win_recorded = False
         
         for i in range(self.n_games):
             winner, final_state, history = self.play_game()
             if winner:
-                wins += 1
-                if not first_win_recorded:
-                    first_win_game = i  
-                    first_win_recorded = True
-            else:
-                losses += 1 
-            
-            if propagation_type == "backward":
                 self.back_propagate_reward(winner, final_state, history)
-            elif propagation_type == "forward":
+
+                if first_win_game is None:
+                    first_win_game = i  
+                    break
+            else:
                 self.forward_propagate_reward(winner, final_state, history)
 
-        print(f"Wins: {wins}, Losses: {losses}")
-        if first_win_recorded:
+        if first_win_game is not None:
             print(f"Games played prior to first win: {first_win_game}")
 
             

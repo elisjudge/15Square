@@ -4,13 +4,13 @@ import random
 from board import Board
 
 class Game:
-    def __init__(self, player) -> None:
+    def __init__(self, player, seed=None) -> None:
         self.board = Board()
         self.player = player
         self.winner = False
         self.target_index = None
         self.board_shuffled = False
-        self.shuffle_board()
+        self.shuffle_board(seed=seed)
         self.set_target_index()
         self.valid_moves = self.get_valid_moves()
         self.n_moves = 0
@@ -26,10 +26,17 @@ class Game:
             elif i % self.board.n_cols != self.board.n_cols - 1 and self.board.cells[i + 1] == self.board.target:
                 self.swap_cells(i, i + 1)
 
-    def shuffle_board(self):
+    def shuffle_board(self, seed=None):
+        if seed is not None:
+            random.seed(seed) 
+        
         for _ in range(1000):
             selection = random.randint(0, self.board.n_cells - 1)
             self.simulate_click(selection)
+
+        if seed is not None:
+            random.seed()
+        
         self.board_shuffled = True
 
     def swap_cells(self, i, j):

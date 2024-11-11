@@ -24,7 +24,7 @@ class CmdLineParser:
     def do_args(self):
         self.args = self.get_args()
         if self.args.type == 'human':
-            game = Game(player=HumanPlayer())
+            game = Game(player=HumanPlayer(), seed=10)
             while True:
                 selection = game.player.select_move(state=game.board, valid_moves=game.valid_moves)
                 game.simulate_click(selection)
@@ -41,7 +41,7 @@ class CmdLineParser:
 
             profile = cProfile.Profile()
             profile.enable()
-            trainer.train_ai(propagation_type="forward")
+            trainer.train_ai()
             profile.disable()
             
             # Print profile stats
