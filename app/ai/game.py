@@ -15,6 +15,8 @@ class Game:
         self.set_target_index()
         self.valid_moves = self.get_valid_moves()
         self.n_moves = 0
+        self.priority_conditions = self.board.set_priority_conditions()
+        
         
     def simulate_click(self, i):
         if not self.winner:

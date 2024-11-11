@@ -11,6 +11,7 @@ class Board:
         self.cells = self.create_cells()
         self.row_complete = [False] * self.n_rows
 
+
     def create_cells(self):
         cells = np.array(np.zeros(self.n_cells))
         value = c.STARTING_VALUE
@@ -29,6 +30,42 @@ class Board:
                 self.row_complete[row_index] = np.array_equal(row_values, expected_values)
             else:
                 self.row_complete[row_index] = False
+
+    def set_priority_conditions(self):
+        """Create a dictionary mapping row completion states to target cells."""
+        priority_conditions = {}
+    
+        for idx in range(self.n_rows + 1):
+            row_complete = [False] * self.n_rows
+            if idx > 0:
+                for row in range(0, idx):
+                    row_complete[row] = True
+
+            priority_conditions[tuple(row_complete)] =  []
+
+        for i, condition in enumerate(priority_conditions):
+            if i == 0:
+                start_value = i * self.n_rows + 1
+                end_value = i * self.n_rows + self.n_cols + 1
+                target_values = [val for val in range(start_value, end_value)]
+            
+            elif i == self.n_rows:
+                target_values = None
+
+            elif i > 0:
+                start_value = (i - 1) * self.n_rows + 1
+                if i == self.n_rows - 1:
+                    end_value = i * self.n_rows + self.n_cols
+                else:
+                    end_value = i * self.n_rows + self.n_cols + 1
+
+                target_values = [val for val in range(start_value, end_value)]
+
+            priority_conditions[condition] = target_values
+            
+        return priority_conditions
+
+        
 
     def __repr__(self) -> str:
         return str(self.cells.reshape((self.n_rows, self.n_cols)))

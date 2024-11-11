@@ -22,7 +22,8 @@ class Trainer:
             current_move = game.player.select_move(state=current_state, valid_moves= game.valid_moves)
             current_correct_positions = self.evaluate_correct_positions(current_state)
             current_correct_rows = game.board.row_complete
-            history.append((np.copy(current_state), current_move, current_correct_rows, current_correct_positions))
+            current_priority_values = game.priority_conditions.get(tuple(current_correct_rows), 0)
+            history.append((np.copy(current_state), current_move, current_correct_rows, current_correct_positions, current_priority_values))
             game.simulate_click(current_move)
             game.n_moves += 1
             if game.winner:
