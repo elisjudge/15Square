@@ -8,7 +8,7 @@ from io import StringIO
 from game import Game
 from human import HumanPlayer
 from ai import AIPlayer
-from train import SimpleAITrainer
+from base_ai_trainer import BaseAITrainer
 
 class CmdLineParser:
     def __init__(self) -> None:
@@ -36,8 +36,7 @@ class CmdLineParser:
 
         if self.args.type == "simple_ai":
             player = AIPlayer()
-            trainer = SimpleAITrainer(player=player)
-
+            trainer = BaseAITrainer(player=player, seed=4)
 
             profile = cProfile.Profile()
             profile.enable()

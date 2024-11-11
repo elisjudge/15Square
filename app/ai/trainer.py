@@ -1,20 +1,16 @@
-from game import Game
 from ai import AIPlayer
-from utils import timeit
-
-import numpy as np
 from functools import reduce
+from game import Game
 
-N_EPISODES = 100
-EPOCH_LENGTH = 1000
-MOVE_LIMIT = 1000
+import config as c
+import numpy as np
 
-class SimpleAITrainer:
-    def __init__(self, player:AIPlayer, move_limit = MOVE_LIMIT, n_episodes = N_EPISODES, epoch_length = EPOCH_LENGTH, seed= None) -> None:
+class Trainer:
+    def __init__(self, player:AIPlayer, move_limit = c.MOVE_LIMIT, n_episodes = c.N_EPISODES, batch_size = c.BATCH_SIZE, seed= None) -> None:
         self.target = player
         self.move_limit = move_limit
         self.n_games = n_episodes
-        self.epoch_length = epoch_length
+        self.batch_size = batch_size
         self.game_seed = seed
 
     def play_game(self):
@@ -75,34 +71,20 @@ class SimpleAITrainer:
         return reduce(lambda acc, tile: acc * base + int(tile), state, 0)
 
 
-    @timeit
     def train_ai(self):
-        first_win_game = None
+        pass
+        # first_win_game = None
         
-        for i in range(self.n_games):
-            winner, final_state, history = self.play_game()
-            if winner:
-                self.back_propagate_reward(winner, final_state, history)
+        # for i in range(self.n_games):
+        #     winner, final_state, history = self.play_game()
+        #     if winner:
+        #         self.back_propagate_reward(winner, final_state, history)
 
-                if first_win_game is None:
-                    first_win_game = i  
-                    break
-            else:
-                self.forward_propagate_reward(winner, final_state, history)
+        #         if first_win_game is None:
+        #             first_win_game = i  
+        #             break
+        #     else:
+        #         self.forward_propagate_reward(winner, final_state, history)
 
-        if first_win_game is not None:
-            print(f"Games played prior to first win: {first_win_game}")
-
-            
-            
-
-
-
-
-
-
-            
-
-
-        
-
+        # if first_win_game is not None:
+        #     print(f"Games played prior to first win: {first_win_game}")
