@@ -1,11 +1,10 @@
 import numpy as np
-
-STARTING_VALUE = 1
+import config as c
 
 class Board:
-    def __init__(self, N_ROWS = 4, N_COLS = 4) -> None:
-        self.n_rows = N_ROWS
-        self.n_cols = N_COLS
+    def __init__(self, n_rows = c.N_ROWS, n_cols = c.N_COLS) -> None:
+        self.n_rows = n_rows
+        self.n_cols = n_cols
         self.n_cells = self.n_rows * self.n_cols
         self.target = self.n_cells
         self.target_index = self.n_cells - 1
@@ -14,7 +13,7 @@ class Board:
 
     def create_cells(self):
         cells = np.array(np.zeros(self.n_cells))
-        value = STARTING_VALUE
+        value = c.STARTING_VALUE
         for i in range(self.n_rows * self.n_cols):
                 cells[i] = value
                 value += 1
@@ -33,5 +32,3 @@ class Board:
 
     def __repr__(self) -> str:
         return str(self.cells.reshape((self.n_rows, self.n_cols)))
-    
-    

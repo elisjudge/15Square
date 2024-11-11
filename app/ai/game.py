@@ -1,3 +1,4 @@
+import config as c
 import numpy as np
 import random
 
@@ -30,7 +31,7 @@ class Game:
         if seed is not None:
             random.seed(seed) 
         
-        for _ in range(1000):
+        for _ in range(c.N_SHUFFLES):
             selection = random.randint(0, self.board.n_cells - 1)
             self.simulate_click(selection)
 
