@@ -5,7 +5,7 @@ import random
 from functools import reduce
 
 class AIPlayer(Player):
-    def __init__(self, learning_rate = 0.1, discount_factor = 0.9, epsilon = 0.5) -> None:
+    def __init__(self, learning_rate = 0.1, discount_factor = 0.9, epsilon = 0.9) -> None:
         super().__init__()
         self.lr = learning_rate
         self.df = discount_factor
@@ -46,3 +46,13 @@ class AIPlayer(Player):
         new_q = old_q + self.lr * (reward + self.df * max_next_q - old_q)
         self.q_table[hashed_state][str(action)] = new_q
         return abs(new_q - old_q)
+
+class RandomMovingAI(Player):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def select_move(self, **kwargs):
+        valid_moves = [val for val in kwargs["valid_moves"].values() if val]
+        return random.choice(valid_moves)
+
+        
