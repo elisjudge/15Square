@@ -164,3 +164,7 @@ cython_debug/
 
 # Database files
 *.db
+
+
+# Q-TABLE
+/app/ai/ai_q.json
