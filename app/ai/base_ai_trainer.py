@@ -26,8 +26,6 @@ class BaseAITrainer(Trainer):
             next_correct_rows = history[i + 1][2] if i + 1 < len(history) else current_correct_rows
             next_correct_positions = history[i + 1][3] if i + 1 < len(history) else current_correct_positions
 
-  
-
             positional_reward = len(next_correct_positions)
             row_completion_reward = sum(next_correct_rows) * 10
 
