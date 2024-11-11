@@ -49,7 +49,7 @@ class Game:
             self.winner = all(self.board.row_complete)
 
     def set_target_index(self):
-        self.target_index = int(np.nonzero(self.board.cells == 16)[0][0])
+        self.target_index = int(np.nonzero(self.board.cells == self.board.n_cells)[0][0])
     
     def get_valid_moves(self):
         return {
