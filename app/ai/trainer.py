@@ -35,22 +35,12 @@ class Trainer:
     
     def back_propagate_reward(self, final_state, history):
         """Standard backward propagation, updating Q-table immediately."""
-        reward = 100 
-        for i in range(len(history) - 1, -1, -1):
-            current_state, action, current_correct_rows, current_correct_positions = history[i]
-            next_state = history[i + 1][0] if i + 1 < len(history) else final_state
-            self.update_q_value(current_state, action, reward, next_state)
+        pass
+
     
     def forward_propagate_reward(self, final_state, history):
         """Standard forward propagation, updating Q-table immediately."""
-        for i in range(len(history)):
-            current_state, action, current_correct_rows, current_correct_positions = history[i]
-            next_state = history[i + 1][0] if i + 1 < len(history) else final_state
-            final_state_correct_positions = self.evaluate_correct_positions(final_state)
-            next_correct_positions = history[i + 1][2] if i + 1 < len(history) else final_state_correct_positions
-
-            reward = len(next_correct_positions)
-            self.update_q_value(current_state, action, reward, next_state)
+        pass
 
     def hash_state(self, state):
         return tuple(map(int, state))

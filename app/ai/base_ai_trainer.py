@@ -7,6 +7,29 @@ import config as c
 class BaseAITrainer(Trainer):
     def __init__(self, player: AIPlayer, move_limit=c.MOVE_LIMIT, n_episodes=c.N_EPISODES, batch_size=c.BATCH_SIZE, seed=None) -> None:
         super().__init__(player, move_limit, n_episodes, batch_size, seed)
+
+    def back_propagate_reward(self, final_state, history):
+        """Standard backward propagation, updating Q-table immediately."""
+        reward = 100 
+        for i in range(len(history) - 1, -1, -1):
+            current_state, action, current_correct_rows, current_correct_positions = history[i]
+            next_state = history[i + 1][0] if i + 1 < len(history) else final_state
+            self.update_q_value(current_state, action, reward, next_state)
+    
+    def forward_propagate_reward(self, final_state, history):
+        """Standard forward propagation, updating Q-table immediately."""
+        for i in range(len(history)):
+            current_state, action, current_correct_rows, current_correct_positions = history[i]
+            next_state = history[i + 1][0] if i + 1 < len(history) else final_state
+            next_correct_rows = history[i + 1][2] if i + 1 < len(history) else current_correct_rows
+            next_correct_positions = history[i + 1][3] if i + 1 < len(history) else current_correct_positions
+
+            positional_reward = len(next_correct_positions)
+            row_completion_reward = sum(next_correct_rows) * 10
+
+            reward = positional_reward + row_completion_reward
+
+            self.update_q_value(current_state, action, reward, next_state)
     
     @timeit
     def train_ai(self):
