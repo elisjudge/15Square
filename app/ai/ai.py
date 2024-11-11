@@ -1,11 +1,12 @@
-from player import Player
+import config as c
 import numpy as np
 import random
 
 from functools import reduce
+from player import Player
 
 class AIPlayer(Player):
-    def __init__(self, learning_rate = 0.1, discount_factor = 0.9, epsilon = 0.9) -> None:
+    def __init__(self, learning_rate = c.LEARNING_RATE, discount_factor = c.DISCOUNT_FACTOR, epsilon = c.EPSILON) -> None:
         super().__init__()
         self.lr = learning_rate
         self.df = discount_factor
