@@ -9,32 +9,24 @@ class Game:
         self.board = Board()
         self.player = player
         self.winner = False
-        self.target_index = None
+        self.target_index = self.set_target_index()
+        self.valid_moves = self.get_valid_moves()
         self.board_shuffled = False
         self.shuffle_board(seed=seed)
-        self.set_target_index()
-        self.valid_moves = self.get_valid_moves()
         self.n_moves = 0
         self.priority_conditions = self.board.set_priority_conditions()
         
-        
-    def simulate_click(self, i):
+    def simulate_click(self, selection):
         if not self.winner:
-            if i - self.board.n_rows >= 0 and self.board.cells[i - self.board.n_rows] == self.board.target:
-                self.swap_cells(i, i - self.board.n_rows)
-            elif i + self.board.n_rows < self.board.n_cells and self.board.cells[i + self.board.n_rows] == self.board.target:
-                self.swap_cells(i, i + self.board.n_rows)
-            elif i % self.board.n_cols != 0 and self.board.cells[i - 1] == self.board.target:
-                self.swap_cells(i, i - 1)
-            elif i % self.board.n_cols != self.board.n_cols - 1 and self.board.cells[i + 1] == self.board.target:
-                self.swap_cells(i, i + 1)
+            self.swap_cells(self.target_index, selection)
 
     def shuffle_board(self, seed=None):
         if seed is not None:
             random.seed(seed) 
         
         for _ in range(c.N_SHUFFLES):
-            selection = random.randint(0, self.board.n_cells - 1)
+            valid_move_indices = [move for move in self.valid_moves.values()]
+            selection = random.choice(valid_move_indices)
             self.simulate_click(selection)
 
         if seed is not None:
@@ -42,22 +34,17 @@ class Game:
         
         self.board_shuffled = True
 
-    def swap_cells(self, i, j):
-        self.board.cells[i], self.board.cells[j] = self.board.cells[j], self.board.cells[i]
+    def swap_cells(self, empty_cell, selection):
+        self.board.cells[empty_cell], self.board.cells[selection] = self.board.cells[selection], self.board.cells[empty_cell]
+        self.target_index = selection
+        self.valid_moves = self.get_valid_moves()
 
         if self.board_shuffled:
-            self.set_target_index()
-            self.valid_moves = self.get_valid_moves()
             self.board.update_row_status()
             self.winner = all(self.board.row_complete)
 
     def set_target_index(self):
-        self.target_index = int(np.nonzero(self.board.cells == self.board.n_cells)[0][0])
+        return int(np.nonzero(self.board.cells == self.board.n_cells)[0][0])
     
     def get_valid_moves(self):
-        return {
-            "slide_down": self.target_index - self.board.n_rows if self.target_index - self.board.n_rows >= 0 else None,
-            "slide_up": self.target_index + self.board.n_rows if self.target_index + self.board.n_rows < self.board.n_cells else None,
-            "slide_right": self.target_index - 1 if self.target_index % self.board.n_cols != 0 else None,
-            "slide_left": self.target_index + 1 if self.target_index % self.board.n_cols != self.board.n_cols - 1 else None
-        }
+        return self.board.valid_moves.get(self.target_index)

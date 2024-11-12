@@ -10,6 +10,7 @@ class Board:
         self.target_index = self.n_cells - 1
         self.cells = self.create_cells()
         self.row_complete = [False] * self.n_rows
+        self.valid_moves = self.set_valid_moves()
 
 
     def create_cells(self):
@@ -65,7 +66,17 @@ class Board:
             
         return priority_conditions
 
-        
+    def set_valid_moves(self):
+        valid_moves = {}
+        for board_idx in range(self.n_cells):
+            moves = {
+                "slide_down": board_idx - self.n_rows if board_idx - self.n_rows >= 0 else None,
+                "slide_up": board_idx + self.n_rows if board_idx + self.n_rows < self.n_cells else None,
+                "slide_right": board_idx - 1 if board_idx % self.n_cols != 0 else None,
+                "slide_left": board_idx + 1 if board_idx % self.n_cols != self.n_cols - 1 else None
+            }
+            valid_moves[board_idx] = {direction: move for direction, move in moves.items() if move is not None}
+        return valid_moves
 
     def __repr__(self) -> str:
         return str(self.cells.reshape((self.n_rows, self.n_cols)))
