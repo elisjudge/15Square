@@ -18,6 +18,8 @@ class Trainer:
         history = []
 
         for _ in range(self.move_limit):
+            if game.winner:
+                break
             current_state = game.board.cells
             current_move = game.player.select_move(state=current_state, valid_moves= game.valid_moves)
             current_correct_positions = self.evaluate_correct_positions(current_state)
@@ -26,8 +28,6 @@ class Trainer:
             history.append((np.copy(current_state), current_move, current_correct_rows, current_correct_positions, current_priority_values))
             game.simulate_click(current_move)
             game.n_moves += 1
-            if game.winner:
-                break
             
         return game.winner, game.board.cells, history
     

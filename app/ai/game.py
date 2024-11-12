@@ -17,8 +17,7 @@ class Game:
         self.priority_conditions = self.board.set_priority_conditions()
         
     def simulate_click(self, selection):
-        if not self.winner:
-            self.swap_cells(self.target_index, selection)
+        self.swap_cells(self.target_index, selection)
 
     def shuffle_board(self, seed=None):
         if seed is not None:
