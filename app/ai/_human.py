@@ -9,5 +9,8 @@ class HumanPlayer(Player):
         print()
         print(kwargs["valid_moves"])
         print()
-        selection = int(input("Enter index you wish to move: "))
-        return selection
+        while True:
+            selection = int(input("Enter index you wish to move: "))
+            if selection in kwargs["valid_moves"].values():
+                return selection
+            print("Invalid selection")
