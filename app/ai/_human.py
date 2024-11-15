@@ -1,4 +1,4 @@
-from player import Player
+from ._player import Player
 
 class HumanPlayer(Player):
     def __init__(self) -> None:

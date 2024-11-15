@@ -1,7 +1,9 @@
-from ai import AIPlayer
-from game import Game
+from . import _config as c
+from ._ai import AIPlayer
+from ._game import Game
 
-import config as c
+from pathlib import Path
+
 import json
 import numpy as np
 
@@ -47,14 +49,25 @@ class Trainer:
         return tuple(map(int, state))
     
     def save_q_table(self, filename="ai_q.json"):
+        # Define the target folder and ensure it exists
+        target_folder = Path(__file__).resolve().parent / "q"
+        target_folder.mkdir(parents=True, exist_ok=True)
+        
+        # Set the full file path
+        file_path = target_folder / filename
+
         """Save the Q-table to a file with tuple keys converted to strings for JSON compatibility."""
         q_table_serializable = {str(key): value for key, value in self.target.q_table.items()}
-        with open(filename, "w") as f:
-            json.dump(q_table_serializable, f, indent=4)
+        with file_path.open("w") as f:
+                    json.dump(q_table_serializable, f, indent=4)
 
     def load_q_table(self, filename="ai_q.json"):
-        """Load the Q-table from a file, converting string keys back to tuples."""
-        with open(filename, "r") as f:
+        """Load the Q-table from a file within the module's 'ai/q' subfolder."""
+        # Define the target file path
+        file_path = Path(__file__).resolve().parent / "q" / filename
+        
+        # Load the Q-table
+        with file_path.open("r") as f:
             q_table_data = json.load(f)
         self.target.q_table = {eval(key): value for key, value in q_table_data.items()}
     

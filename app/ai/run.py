@@ -5,10 +5,10 @@ import cProfile
 import pstats  # Optional, for organizing profiling output
 from io import StringIO
 
-from game import Game
-from human import HumanPlayer
-from ai import AIPlayer
-from base_ai_trainer import BaseAITrainer
+from ai._game import Game
+from ai._human import HumanPlayer
+from ai._ai import AIPlayer
+from ai._base_ai_trainer import BaseAITrainer
 
 class CmdLineParser:
     def __init__(self) -> None:

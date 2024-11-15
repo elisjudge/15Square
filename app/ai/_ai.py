@@ -1,8 +1,8 @@
-import config as c
+from . import _config as c
+from ._player import Player
+
 import numpy as np
 import random
-
-from player import Player
 
 class AIPlayer(Player):
     def __init__(self, learning_rate = c.LEARNING_RATE, discount_factor = c.DISCOUNT_FACTOR, epsilon = c.EPSILON) -> None:

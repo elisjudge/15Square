@@ -1,5 +1,5 @@
+from . import _config as c
 import numpy as np
-import config as c
 
 class Board:
     def __init__(self, n_rows = c.N_ROWS, n_cols = c.N_COLS) -> None:

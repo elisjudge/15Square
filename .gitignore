@@ -162,4 +162,4 @@ cython_debug/
 .vscode/
 
 # Q-TABLE
-/app/ai/ai_q.json
+/app/ai/q

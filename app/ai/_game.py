@@ -1,8 +1,9 @@
-import config as c
+from . import _config as c
+from ._board import Board
+
 import numpy as np
 import random
 
-from board import Board
 
 class Game:
     def __init__(self, player, seed=None) -> None:

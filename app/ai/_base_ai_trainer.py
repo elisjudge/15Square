@@ -1,8 +1,8 @@
-from ai import AIPlayer
-from trainer import Trainer
-from utils import timeit
+from . import _config as c
+from ._ai import AIPlayer
+from ._trainer import Trainer
+from ._utils import timeit
 
-import config as c
 import numpy as np
 
 class BaseAITrainer(Trainer):
