@@ -16,6 +16,7 @@ class TestBoardInitialization(unittest.TestCase):
         self.assertTrue(hasattr(self.test_board, "n_rows"), "GameBoard should have property 'n_rows'.")
         self.assertTrue(hasattr(self.test_board, "n_cols"), "GameBoard should have property 'n_cols'.")
         self.assertTrue(hasattr(self.test_board, "n_cells"), "GameBoard should have property 'n_cells'.")
+        self.assertTrue(hasattr(self.test_board, "target_index"), "GameBoard should have property 'target_index'.")
         ### ADD MORE ATTRIBUTES
 
     def test_2_initialization_methods(self):

@@ -6,9 +6,8 @@ class Board:
         self._n_rows = n_rows
         self._n_cols = n_cols
         self._n_cells = self._n_rows * self._n_cols
-        self.target = self.n_cells
-        self.target_index = self.n_cells - 1
         self.cells = self.generate_random_cells(seed)
+        self._target_index = self.set_target_index()
         self.row_complete = [False] * self.n_rows
         self.valid_moves = self.set_valid_moves()
 
@@ -72,6 +71,9 @@ class Board:
             priority_conditions[condition] = target_values
             
         return priority_conditions
+    
+    def set_target_index(self):
+        return np.where(self.cells == None)[0][0]
 
     def set_valid_moves(self):
         valid_moves = {}
@@ -109,6 +111,20 @@ class Board:
     def n_cells(self):
         """Total cells on the board"""
         return self._n_cells
+    
+    @property
+    def target_index(self):
+        """Position of the the empty cell in array"""
+        return self._target_index
+    
+    @target_index.setter
+    def target_index(self, index):
+        """Updates the position of the target index after a move"""
+        if not (0 <= index < self.n_cells):
+            raise ValueError("Target Index must be within the bounds of the board.")
+        if self.cells[index] is not None:
+            raise ValueError("Target Index must correspond to the empty cell (None)")
+        self._target_index = index
     
     @staticmethod                    
     def count_inversions(cells):
