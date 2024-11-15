@@ -1,17 +1,19 @@
 class Game {
     constructor({
-        board = document.getElementById("board"),
+        boardElement = document.getElementById("board"),
         tiles = [],
         rows = 4,
-        columns = 4
+        columns = 4,
+        boardData = []
         
         } = {}) {
         this.board = {
-            gameBoard: board,
+            gameBoard: boardElement,
             isShuffled: false,
         };
         this.tiles = tiles;
-        this.winningTiles = [];
+        this.boardData = boardData
+        this.winningTiles = Array.from({ length: rows * columns }, (_, i) => (i + 1 === rows * columns ? null : i + 1));;
         this.winner = false;
         this.rows = rows;
         this.columns = columns;
@@ -19,39 +21,29 @@ class Game {
     }
 
     init() {
+        // Clear the board container in case of reinitialization
+        this.board.gameBoard.innerHTML = "";
+
+        let index = 0;
         for (let i = 0; i < this.rows; i++) {
             let row = document.createElement("div");
             row.className = "row";
+
             for (let j = 0; j < this.columns; j++) {
                 let cell = document.createElement("div");
-                let index = i * 4 + j + 1;
-                
-                cell.className = "tile";
+                let value = this.boardData[index];
 
-                cell.dataset.index = index;
-                cell.dataset.value = index;
-                cell.textContent = index === 16 ? "" : index;
+                cell.className = "tile";
+                cell.dataset.index = index + 1; // Index starts at 1
+                cell.dataset.value = value === null ? "16" : value; // Empty cell as "16"
+                cell.textContent = value === null ? "" : value;
 
                 row.appendChild(cell);
-                this.tiles.push(cell);  // Store tile reference
-                this.winningTiles.push(index); // Store index value
+                this.tiles.push(cell); // Store tile reference
+                index++;
             }
             this.board.gameBoard.appendChild(row);
         }
-
-
-        // Shuffle tiles 
-        for (let i = 0; i < 1000; i++) {
-            this.click({ 
-                target: { 
-                    dataset: {
-                      index: Math.floor(Math.random() * 15) + 1   
-                    }
-                }
-            });
-        }
-        this.board.isShuffled = true;
-
 
         this.tiles.forEach((tile) => {
             tile.addEventListener("click", (event) => {
@@ -60,6 +52,8 @@ class Game {
                 }
             });
         });
+
+        this.board.isShuffled = true; // Assume boardData is already shuffled
     }
 
     click(e) {
@@ -74,7 +68,7 @@ class Game {
         } else if (i % 4 !== 3 && this.tiles[i + 1].dataset.value === "16") {
             this.swap(i, i + 1);
         }
-        
+
         if (this.board.isShuffled) {
             this.checkWin();
         }
@@ -89,7 +83,7 @@ class Game {
     }
 
     checkWin() {
-        for (let i = 0; i < this.tiles.length; i++){
+        for (let i = 0; i < this.tiles.length; i++) {
             if (this.tiles[i].dataset.value != this.winningTiles[i]) {
                 console.log("Not yet");
                 return;
@@ -97,11 +91,13 @@ class Game {
         }
         console.log("you win");
         this.winner = true;
-        this.tiles[this.tiles.length -1].textContent = "16"
+        this.tiles[this.tiles.length - 1].textContent = "16";
     }
 }
 
 // Instantiate Game once DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-    const game = new Game();
+    const game = new Game({
+        boardData: boardData // Use the globally available boardData from Flask
+    });
 });
