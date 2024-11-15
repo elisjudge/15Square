@@ -10,6 +10,12 @@ from ai._human import HumanPlayer
 from ai._ai import AIPlayer
 from ai._base_ai_trainer import BaseAITrainer
 
+import logging
+from logger import setup_logging
+
+setup_logging()
+logger = logging.getLogger("app")
+
 class CmdLineParser:
     def __init__(self) -> None:
         self.parser = argparse.ArgumentParser(description='15 Puzzle')
@@ -53,6 +59,7 @@ class CmdLineParser:
 
 
 def main():
+    logger.debug("This is a debug message.")
     arg_parser = CmdLineParser()
     try: 
         args = arg_parser.do_args()
