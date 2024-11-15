@@ -13,11 +13,14 @@ class TestBoardInitialization(unittest.TestCase):
         self.default_n_cells = self.default_n_rows * self.default_n_columns
 
     def test_1_initialization_properties(self):
+        self.assertTrue(hasattr(self.test_board, "strict"), "GameBoard should have property 'strict'.")
         self.assertTrue(hasattr(self.test_board, "n_rows"), "GameBoard should have property 'n_rows'.")
         self.assertTrue(hasattr(self.test_board, "n_cols"), "GameBoard should have property 'n_cols'.")
         self.assertTrue(hasattr(self.test_board, "n_cells"), "GameBoard should have property 'n_cells'.")
+        self.assertTrue(hasattr(self.test_board, "cells"), "GameBoard should have property 'cells'.")
         self.assertTrue(hasattr(self.test_board, "target_index"), "GameBoard should have property 'target_index'.")
-        ### ADD MORE ATTRIBUTES
+        self.assertTrue(hasattr(self.test_board, "row_complete"), "GameBoard should have property 'row_complete'.")
+        self.assertTrue(hasattr(self.test_board, "valid_moves"), "GameBoard should have property 'valid_moves'.")
 
     def test_2_initialization_methods(self):
         pass
@@ -36,12 +39,6 @@ class TestBoardInitialization(unittest.TestCase):
         self.assertEqual(test_board.n_rows, custom_n_rows, f"Default rows should equal {custom_n_rows}")
         self.assertEqual(test_board.n_cols, custom_n_cols, f"Default columns should equal {custom_n_cols}")
         self.assertEqual(test_board.n_cells, custom_n_cells, f"Default number of cells on {custom_n_rows}x{custom_n_cols} board should be {custom_n_cells}")
-
-        
-
-
-
-        
 
 if __name__ == "__main__":
     unittest.main()

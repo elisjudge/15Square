@@ -1,8 +1,8 @@
 from ._board import Board
 
 class Game:
-    def __init__(self, player, seed=None) -> None:
-        self.board = Board(seed=seed)
+    def __init__(self, player, seed=None, strict=False) -> None:
+        self.board = Board(seed=seed, strict=strict)
         self.player = player
         self.winner = False
         self.valid_moves = self.get_valid_moves()
@@ -13,10 +13,8 @@ class Game:
         self.swap_cells(self.board.target_index, selection)
 
     def swap_cells(self, empty_cell, selection):
-        self.board.cells[empty_cell], self.board.cells[selection] = self.board.cells[selection], self.board.cells[empty_cell]
-        self.board.target_index = selection
+        self.board.update_cells(empty_cell, selection)         
         self.valid_moves = self.get_valid_moves()
-        self.board.update_row_status()
         self.winner = all(self.board.row_complete)
 
     def get_valid_moves(self):

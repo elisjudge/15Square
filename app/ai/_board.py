@@ -1,33 +1,33 @@
 from . import _config as c
+from ._utils import strict_cell_validation
 import numpy as np
 
 class Board:
-    def __init__(self, n_rows = c.N_ROWS, n_cols = c.N_COLS, seed=None) -> None:
+    def __init__(self, n_rows = c.N_ROWS, n_cols = c.N_COLS, seed=None, strict=False) -> None:
+        self._strict = strict
         self._n_rows = n_rows
         self._n_cols = n_cols
         self._n_cells = self._n_rows * self._n_cols
-        self.cells = self.generate_random_cells(seed)
+        self._cells = self.generate_random_cells(seed)
         self._target_index = self.set_target_index()
-        self.row_complete = [False] * self.n_rows
-        self.valid_moves = self.set_valid_moves()
-
-    def create_cells(self):
-        starting_val = c.STARTING_VALUE
-        cells = np.append(np.arange(starting_val, self.n_cells), None)
-        return cells
+        self._row_complete = [False] * self._n_rows
+        self._valid_moves = self.set_valid_moves()
 
     def generate_random_cells(self, seed):
-        cells = self.create_cells()
+        """ Intializes the board for the game """
+        cells = np.append(np.arange(c.STARTING_VALUE, self.n_cells), None)
         self.shuffle_cells(cells, seed)
         self.make_solvable(cells)
         return cells
 
     def get_e_row_number(self, cells):
+        """ Returns row number that contains the empty cell """
         e = np.where(cells == None)[0][0]
         e_row = e // self.n_rows + 1
         return e_row    
 
     def make_solvable(self, cells):
+        """ Guarantees randomly shuffled board can be solved """
         inversions = self.count_inversions(cells)
         e_row = self.get_e_row_number(cells)
         solvability = inversions + e_row
@@ -73,9 +73,17 @@ class Board:
         return priority_conditions
     
     def set_target_index(self):
-        return np.where(self.cells == None)[0][0]
+        """Calculate and validate the position of the empty cell."""
+        try:
+            target_idx = np.where(self.cells == None)[0][0]
+            if not (0 <= target_idx < self.n_cells):
+                raise ValueError("Target index must be within the bounds of the board.")
+            return target_idx
+        except IndexError:
+            raise Exception("Empty cell is missing from the array")
 
     def set_valid_moves(self):
+        """ Builds the dictionary of valid moves in the game """
         valid_moves = {}
         for board_idx in range(self.n_cells):
             moves = {
@@ -86,8 +94,21 @@ class Board:
             }
             valid_moves[board_idx] = {direction: move for direction, move in moves.items() if move is not None}
         return valid_moves
+    
+    @strict_cell_validation
+    def update_cells(self, empty_cell, selection):
+        """
+        Swap two cells on the board.
+        Validation is applied if strict mode is enabled.
+        """
+        self._cells[empty_cell], self._cells[selection] = self._cells[selection], self._cells[empty_cell]
 
+        # Refresh the board state
+        self._target_index = self.set_target_index()
+        self.update_row_status()
+    
     def update_row_status(self):
+        """Recalculate which rows are complete."""
         for row_index in range(self.n_rows):
             if row_index == 0 or self.row_complete[row_index - 1]:
                 start_index = row_index * self.n_cols
@@ -97,15 +118,11 @@ class Board:
                 self.row_complete[row_index] = np.array_equal(row_values, expected_values)
             else:
                 self.row_complete[row_index] = False
-    @property
-    def n_rows(self):
-        """Number of rows on the board."""
-        return self._n_rows
     
     @property
-    def n_cols(self):
-        """Number of columns on the board."""
-        return self._n_cols
+    def cells(self):
+        """The current game board state"""
+        return self._cells
     
     @property
     def n_cells(self):
@@ -113,21 +130,38 @@ class Board:
         return self._n_cells
     
     @property
+    def n_cols(self):
+        """Number of columns on the board."""
+        return self._n_cols
+    
+    @property
+    def n_rows(self):
+        """Number of rows on the board."""
+        return self._n_rows
+    
+    @property
+    def row_complete(self):
+        """List indicating whether each row is complete"""
+        return self._row_complete
+    
+    @property
+    def strict(self):
+        """ Determines whether strict validation of cell swap occurs """
+        return self._strict
+    
+    @property
     def target_index(self):
         """Position of the the empty cell in array"""
         return self._target_index
     
-    @target_index.setter
-    def target_index(self, index):
-        """Updates the position of the target index after a move"""
-        if not (0 <= index < self.n_cells):
-            raise ValueError("Target Index must be within the bounds of the board.")
-        if self.cells[index] is not None:
-            raise ValueError("Target Index must correspond to the empty cell (None)")
-        self._target_index = index
+    @property
+    def valid_moves(self):
+        """Dictionary of valid moves for the current board state."""
+        return self._valid_moves
     
     @staticmethod                    
     def count_inversions(cells):
+        """ Helper function to determine whether board is solvable or not """
         inversions = 0
         for i in range(len(cells)):
             if cells[i] is None:
@@ -139,6 +173,7 @@ class Board:
     
     @staticmethod    
     def shuffle_cells(cells, seed):
+        """ Shuffles board base on seeding """
         if seed is not None:
             np.random.seed(seed) 
 
