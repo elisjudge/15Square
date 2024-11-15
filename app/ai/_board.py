@@ -3,9 +3,9 @@ import numpy as np
 
 class Board:
     def __init__(self, n_rows = c.N_ROWS, n_cols = c.N_COLS, seed=None) -> None:
-        self.n_rows = n_rows
-        self.n_cols = n_cols
-        self.n_cells = self.n_rows * self.n_cols
+        self._n_rows = n_rows
+        self._n_cols = n_cols
+        self._n_cells = self._n_rows * self._n_cols
         self.target = self.n_cells
         self.target_index = self.n_cells - 1
         self.cells = self.generate_random_cells(seed)
@@ -95,7 +95,20 @@ class Board:
                 self.row_complete[row_index] = np.array_equal(row_values, expected_values)
             else:
                 self.row_complete[row_index] = False
-
+    @property
+    def n_rows(self):
+        """Number of rows on the board."""
+        return self._n_rows
+    
+    @property
+    def n_cols(self):
+        """Number of columns on the board."""
+        return self._n_cols
+    
+    @property
+    def n_cells(self):
+        """Total cells on the board"""
+        return self._n_cells
     
     @staticmethod                    
     def count_inversions(cells):
